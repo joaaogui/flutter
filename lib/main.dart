@@ -1,22 +1,17 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: Colors.red),
       debugShowCheckedModeBanner: false,
-
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -32,8 +27,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
- final List<CheckBoxModel> itens = [
+  final List<CheckBoxModel> itens = [
     CheckBoxModel(text: "Matheus"),
     CheckBoxModel(text: "Renato"),
     CheckBoxModel(text: "Julio"),
@@ -42,48 +36,69 @@ class _MyHomePageState extends State<MyHomePage> {
     CheckBoxModel(text: "Leticia"),
     CheckBoxModel(text: "Nadir"),
   ];
+  final _formKey = GlobalKey<FormState>();
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.red,
-        title: Text(widget.title),
-      ),
-      body: ListView.builder(
-        itemCount: itens.length,
-        itemBuilder: (_, int index){
-          return CheckboxWidget(item: itens[index]);
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          List<CheckBoxModel> itensMarcados = List.from(itens.where((item) => item.checked));
-          log('data: item');
-
-          itensMarcados.forEach((item){
-            log('data: item');
-
-            print(item.text);
-            Navigator.of(context).pop(); // dismiss dialog
-
-          });
-
-          showAlertDialog(context);
-          },
-        child: Icon(Icons.apps),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => CupertinoTabScaffold(
+      tabBar: CupertinoTabBar(
+          backgroundColor: CupertinoColors.white,
+          activeColor: CupertinoColors.darkBackgroundGray,
+          items: const [
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.home)),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.airplane)),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.clock)),
+          ]),
+      tabBuilder: (context, index) {
+        switch (index) {
+          case 0:
+            return Scaffold(
+              backgroundColor: CupertinoColors.white,
+              body: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 25.0, left: 25, right: 25),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Enter a search term',
+                            labelText: 'Enter your username',
+                          ),
+                        ),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Enter a search term',
+                            labelText: 'Enter your username',
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {},
+                          child: const Text('Submit'),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          case 1:
+            return Text('.text');
+          case 2:
+          default:
+            return Text('widget.item.text');
+        }
+      });
 }
-showAlertDialog(BuildContext context) {
 
+showAlertDialog(BuildContext context) {
   // set up the button
   Widget okButton = TextButton(
     child: Text("OK"),
     onPressed: () {
       Navigator.of(context).pop(); // dismiss dialog
-
     },
   );
 
@@ -105,16 +120,15 @@ showAlertDialog(BuildContext context) {
   );
 }
 
-class CheckBoxModel{
-
+class CheckBoxModel {
   String text;
   bool checked;
-  CheckBoxModel({required this.text, this.checked = false});
 
+  CheckBoxModel({required this.text, this.checked = false});
 }
 
 class CheckboxWidget extends StatefulWidget {
-  const CheckboxWidget({ Key? key, required this.item }) : super(key: key);
+  const CheckboxWidget({Key? key, required this.item}) : super(key: key);
 
   final CheckBoxModel item;
 
@@ -123,17 +137,15 @@ class CheckboxWidget extends StatefulWidget {
 }
 
 class _CheckboxWidgetState extends State<CheckboxWidget> {
-
   @override
   Widget build(BuildContext context) {
     return CheckboxListTile(
       title: Text(widget.item.text),
       value: widget.item.checked,
-      onChanged: (bool? value){
-        setState((){
+      onChanged: (bool? value) {
+        setState(() {
           widget.item.checked = value ?? false;
           showAlertDialog(context);
-
         });
       },
     );
